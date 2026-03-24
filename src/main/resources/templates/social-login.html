@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Social Login</title>
+    <!-- css for social login page -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Social Login</h1>
+    <button id="googleLoginBtn">Login with Google</button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaxL0-c4n8NodwscctIdgi6anKzykOwiM",
+            authDomain: "booking-7178f.firebaseapp.com",
+            projectId: "booking-7178f",
+            storageBucket: "booking-7178f.firebasestorage.app",
+            messagingSenderId: "693342859916",
+            appId: "1:693342859916:web:265aa9b71788cb7cf4c1a9",
+            measurementId: "G-M9647B3WSZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        async function verifyToken(idToken) {
+          try {
+            const response = await fetch('/api/auth/verify-token', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken: idToken })
+            });
+            const data = await response.text();
+            console.log("Token verification result:", data);
+          } catch (error) {
+            console.error("Error sending token to backend:", error);
+          }
+        }
+
+        // Google Login
+        document.getElementById('googleLoginBtn').onclick = () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then(async (result) => {
+                  const idToken = await result.user.getIdToken();
+                  console.log("Google login successful idToken:", idToken);
+                    const user = result.user;
+                    await verifyToken(idToken);
+                })
+                .catch((error) => {
+                    console.error("Google login error:", error.message);
+                });
+        };
+
+    </script>
+</body>
+</html>
