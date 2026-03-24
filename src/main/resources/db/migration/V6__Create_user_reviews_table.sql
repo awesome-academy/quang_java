@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS user_reviews (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  tour_id BIGINT NOT NULL,
+  rating INT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (tour_id) REFERENCES tours(id)
+);
