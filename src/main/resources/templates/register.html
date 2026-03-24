@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Page</title>
+  <style>
+    form {
+      max-width: 400px;
+      margin: auto;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 1em;
+    }
+    label {
+      margin-top: 1em;
+      display: block;
+    }
+    input {
+      width: 95%;
+      padding: .7em;
+      margin-top: .5em;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.7em;
+      width: 100%;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: .3em;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 1em;
+    }
+  </style>
+
+</head>
+<body>
+  <h2 style="text-align: center;">Register</h2>
+  <form th:action="@{/register}" method="post">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required>
+    <br>
+    <button type="submit">Register</button>
+  </form>
+  <a th:href="@{/login}">Back to Login</a>
+</body>
+</html>
