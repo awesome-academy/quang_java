@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Feed</title>
+    <link rel="icon" href="data:,">
 </head>
 <body>
 
   <div id="user-info" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px; justify-content: flex-end;">
-    <p>Welcome, <span th:text="${username}">User</span>!</p>
+    <p>Welcome,<a th:href="@{/user/info}" th:text="${username}">User</a>!</p>
     <form th:action="@{/logout}" method="post" style="display:inline;">
       <button type="submit">Logout</button>
     </form>
@@ -31,19 +32,29 @@
   </div>
 
   <div id="feed-content" style="margin-top: 30px;">
-    <!-- Booking feed content will be dynamically loaded here -->
-    <!-- console.log tours as list object-->
     <div th:each="tour : ${tours}">
-      <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; display: flex; gap: 15px;">
-        <img src="https://picsum.photos/150/200" alt="Tour Image" style="width: 150px; height: 200px; object-fit: cover;">
-        <div>
-          <h3 th:text="${tour.title}">Tour Title</h3>
-          <p th:text="${tour.description}">Tour Description</p>
-          <p><strong>Price:</strong> $<span th:text="${tour.price}">0.00</span></p>
-          <p><strong>Rating:</strong> <span th:text="${tour.rating}">0.0</span>/5</p>
-          <p><strong>Comments:</strong> <span th:text="${tour.reviewsCount}">0</span></p>
+      <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; display: flex; gap: 15px; height: 110px; overflow: hidden;">
+        <img src="https://picsum.photos/120" alt="Tour Image" style="width: 150px; height: 110px; object-fit: cover;">
+        <div style="overflow: hidden;">
+          <h3 style="margin: 0px 0px 5px 0px; text-decoration: underline;"><a th:href="@{/tour/{id}(id=${tour.id})}" th:text="${tour.title}" style="margin: 0 0 3px 0; text-decoration: none; color: inherit;">Tour Title</a></h3>
+          <p th:text="${tour.description}" style="margin: 0 0 3px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tour Description</p>
+          <p style="margin: 0 0 3px 0;"><strong>Price:</strong> $<span th:text="${tour.price}">0.00</span></p>
+          <p style="margin: 0 0 3px 0;"><strong>Rating:</strong> <span th:text="${tour.rating}">0.0</span>/5</p>
+          <p style="margin: 0;"><strong>Comments:</strong> <span th:text="${tour.reviewsCount}">0</span></p>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div th:if="${totalPages > 1}" id="pagination" style="text-align: center; margin-top: 20px;">
+    <a th:if="${curPage > 0}" th:href="@{/home(page=${curPage - 1}, filter=${currentFilter})}" style="margin-right: 10px;">&#x25C0;</a>
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+      <a th:href="@{/home(page=${i}, filter=${currentFilter})}"
+        th:text="${i + 1}"
+        th:styleappend="${i == curPage} ? 'font-weight:bold; background-color:#007BFF; color:white; padding:4px 10px; border-radius:4px; text-decoration:none;' : 'padding:4px 10px; text-decoration:none;'">
+      </a>
+    </span>
+    <a th:if="${curPage + 1 < totalPages}" th:href="@{/home(page=${curPage + 1}, filter=${currentFilter})}" style="margin-left: 10px;">&#x25B6;</a>
   </div>
 </body>
 

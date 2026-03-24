@@ -1,6 +1,6 @@
 package com.sun.booking.comments;
 
-import com.sun.booking.userreviews.UserReview;
+import com.sun.booking.userreviews.entity.UserReview;
 import com.sun.booking.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
