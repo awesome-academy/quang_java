@@ -1,4 +1,4 @@
-package com.sun.booking.userreviews;
+package com.sun.booking.userreviews.entity;
 
 import com.sun.booking.tours.Tour;
 import com.sun.booking.users.User;

@@ -1,4 +1,4 @@
-package com.sun.booking.controller.authentication;
+package com.sun.booking.controller;
 
 import com.sun.booking.auth.dto.UserDTO;
 import com.sun.booking.common.Utils;
@@ -35,21 +35,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class AuthMVCController {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
-
-  @GetMapping("/social-login")
-  public String socialLogin() {
-    return "social-login";
-  }
 
   @GetMapping("/user-login")
   public String userLogin() {
     return "user-login";
   }
-
 
   @GetMapping("/login")
   public String login(@RequestParam(value = "error", required = false) String error, Model model) {

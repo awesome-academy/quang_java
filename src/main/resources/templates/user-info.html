@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info</title>
+</head>
+<body>
+  <h1>User Info</h1>
+
+  <div id="user-info" style="border: 1px solid #ccc; padding: 15px; max-width: 400px;">
+    <p><strong>Username:</strong> <span th:text="${user.username}">Username</span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}">Email</span></p>
+    <p><strong>Social ID:</strong> <span th:text="${user.socialId}">Social ID</span></p>
+    <p><strong>Social Type:</strong> <span th:text="${user.socialType}">Social Type</span></p>
+  </div>
+
+  <h2 style="margin-top: 30px;">User Reviews</h2>
+  
+  <div id="user-reviews" style="border: 1px solid #ccc; padding: 15px; max-width: 600px;">
+    <div th:if="${#lists.isEmpty(reviews.content)}">
+      <p>No reviews found.</p>
+    </div>
+    <div th:each="review : ${reviews.content}" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+      <p><strong>Review ID:</strong> <span th:text="${review.userId}">Review ID</span></p>
+      <p th:if="${review.tour != null}"><strong>Tour:</strong> <span th:text="${review.tour.title}">Tour Title</span> - <span th:text="${review.tour.description}">Description</span> - <span th:text="${review.tour.price}">Price</span></p>
+      <!-- rating is star -->
+      <p><strong>Rating:</strong> 
+        <span th:each="i : ${#numbers.sequence(1, review.rating)}" th:text="'★'">★</span>
+        <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}" th:text="'☆'">☆</span>
+      </p>
+      <p><strong>Comment:</strong> <span th:text="${review.content}">Comment</span></p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(reviews.content)}" style="margin-top: 10px; text-align: center;">
+      <!-- Previous -->
+      <a th:if="${reviews.curPage > 0}"
+        th:href="@{/user/info(page=${reviews.curPage - 1}, size=${reviews.curPageSize})}">
+        &#x25C0;
+      </a>
+
+      <!-- Page numbers  highlight page selected-->
+      <span th:each="i : ${#numbers.sequence(0, reviews.totalPages - 1)}">
+        <a th:href="@{/user/info(page=${i}, size=${reviews.curPageSize})}"
+          th:text="${i + 1}"
+          th:styleappend="${i == reviews.curPage} ? 'font-weight:bold; background-color:#007BFF; color:white; padding:4px 10px; border-radius:4px; text-decoration:none;' : 'padding:4px 10px; text-decoration:none;'">
+        </a>
+      </span>
+
+      <!-- Next -->
+      <a th:if="${reviews.curPage + 1 < reviews.totalPages}"
+        th:href="@{/user/info(page=${reviews.curPage + 1}, size=${reviews.curPageSize})}">
+        &#x25B6;
+      </a>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <a href="/home" onclick="window.history.back();" style="padding: 8px 16px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">Back</a>
+  </div>
+</body>
+
+</html>
