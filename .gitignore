@@ -42,3 +42,5 @@ build/
 *.jar
 *.war
 *.ear
+
+src/main/resources/keys/firebase.json

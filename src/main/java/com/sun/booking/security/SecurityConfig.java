@@ -54,7 +54,7 @@ public class SecurityConfig {
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/social-login", "/css/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/login", "/register", "/social-login", "/auth/social-callback", "/css/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(formLogin -> formLogin
@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .failureHandler(new MyAuthenticationFailureHandler())
                 .permitAll()
             )
+            .addFilterBefore(customAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout
                 .permitAll()
             );
