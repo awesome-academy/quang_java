@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Feed</title>
+</head>
+<body>
+
+  <div id="user-info" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px; justify-content: flex-end;">
+    <p>Welcome, <span th:text="${username}">User</span>!</p>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+
+  <div id="search-info">
+    <h2>Search for Bookings</h2>
+    <form th:action="@{/search}" method="get" style="display: flex; gap: 10px; margin-top: 10px;">
+      <input type="text" name="query" placeholder="Search by destination, date, etc." style="flex: 1; padding: 8px;">
+      <div style="position: relative; display: inline-block;">
+        <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); pointer-events: none;">&#9776;</span>
+        <select id="order-by" name="filter" style="padding: 8px 8px 8px 28px; min-width: 150px;">
+          <option value="rating">Rating</option>
+          <option value="date">Date Posted</option>
+          <option value="comments">User Comments</option>
+        </select>
+      </div>
+      <button type="submit" style="padding: 8px 16px;">Search</button>
+    </form>
+  </div>
+
+  <div id="feed-content" style="margin-top: 30px;">
+    <!-- Booking feed content will be dynamically loaded here -->
+    <!-- console.log tours as list object-->
+    <div th:each="tour : ${tours}">
+      <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; display: flex; gap: 15px;">
+        <img src="https://picsum.photos/150/200" alt="Tour Image" style="width: 150px; height: 200px; object-fit: cover;">
+        <div>
+          <h3 th:text="${tour.title}">Tour Title</h3>
+          <p th:text="${tour.description}">Tour Description</p>
+          <p><strong>Price:</strong> $<span th:text="${tour.price}">0.00</span></p>
+          <p><strong>Rating:</strong> <span th:text="${tour.rating}">0.0</span>/5</p>
+          <p><strong>Comments:</strong> <span th:text="${tour.reviewsCount}">0</span></p>
+        </div>
+      </div>
+  </div>
+</body>
+
+</html>
