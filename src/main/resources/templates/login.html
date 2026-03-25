@@ -39,7 +39,7 @@
     </style>
 		<script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBaxL0-c4n8NodwscctIdgi6anKzykOwiM",
@@ -55,14 +55,22 @@
         const auth = getAuth(app);
 
         async function verifyToken(idToken) {
-          try {
+					try {
             const response = await fetch('/api/auth/verify-token', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ idToken: idToken })
             });
-            const data = await response.text();
-            console.log("Token verification result:", data);
+            const data = await response.json();
+						if (data.statusCode === 200) {
+							console.log("Token verification result:", data.data.token);
+							// Submit token via form POST to create Spring Security session
+							const form = document.getElementById('socialCallbackForm');
+							document.getElementById('socialToken').value = data.data.token;
+							form.submit();
+						} else {
+							console.error("Token verification failed:", data);
+						}
           } catch (error) {
             console.error("Error sending token to backend:", error);
           }
@@ -75,11 +83,41 @@
                 .then(async (result) => {
                   const idToken = await result.user.getIdToken();
                   console.log("Google login successful idToken:", idToken);
-                    const user = result.user;
-                    await verifyToken(idToken);
+									const user = result.user;
+									await verifyToken(idToken);
                 })
                 .catch((error) => {
                     console.error("Google login error:", error.message);
+                });
+        };
+
+        // Facebook Login
+        document.getElementById('facebookLoginBtn').onclick = () => {
+            const provider = new FacebookAuthProvider();
+            signInWithPopup(auth, provider)
+                .then(async (result) => {
+                  const idToken = await result.user.getIdToken();
+                  console.log("Facebook login successful idToken:", idToken);
+									const user = result.user;
+									await verifyToken(idToken);
+                })
+                .catch((error) => {
+                    console.error("Facebook login error:", error.message);
+                });
+        };
+
+        // Twitter Login
+        document.getElementById('twitterLoginBtn').onclick = () => {
+            const provider = new TwitterAuthProvider();
+            signInWithPopup(auth, provider)
+                .then(async (result) => {
+                  const idToken = await result.user.getIdToken();
+                  console.log("Twitter login successful idToken:", idToken);
+									const user = result.user;
+									await verifyToken(idToken);
+                })
+                .catch((error) => {
+                    console.error("Twitter login error:", error.message);
                 });
         };
 
@@ -106,8 +144,15 @@
 
     <!-- social login button size equal to login button padding center -->
     <button id="googleLoginBtn" style="background-color: #DB4437; color: white; padding: 0.7em; width: 200px; border: none; border-radius: .3em; text-align: center; margin: 0 auto; display: block; margin-top: 20px;">Login with Google</button>
+    <button id="facebookLoginBtn" style="background-color: #4267B2; color: white; padding: 0.7em; width: 200px; border: none; border-radius: .3em; text-align: center; margin: 0 auto; display: block; margin-top: 10px;">Login with Facebook</button>
+    <button id="twitterLoginBtn" style="background-color: #1DA1F2; color: white; padding: 0.7em; width: 200px; border: none; border-radius: .3em; text-align: center; margin: 0 auto; display: block; margin-top: 10px;">Login with Twitter</button>
 
-		<!-- register button -->
+    <!-- hidden form for social login callback -->
+    <form id="socialCallbackForm" method="post" th:action="@{/auth/social-callback}" style="display:none;">
+      <input type="hidden" id="socialToken" name="token" />
+    </form>
+
+    <!-- register button -->
     <a th:href="@{/register}">Register</a>
 
     <div th:if="${loginError}" style="color: red;">
