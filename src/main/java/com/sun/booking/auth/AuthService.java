@@ -1,6 +1,7 @@
 package com.sun.booking.auth;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.firebase.auth.FirebaseToken;
 import com.sun.booking.auth.dto.UserDTO;
+import com.sun.booking.common.Utils;
 import com.sun.booking.firebase.FirebaseService;
 import com.sun.booking.jwt.JwtService;
 import com.sun.booking.users.User;
@@ -29,17 +31,28 @@ public class AuthService {
     if (decodedToken == null) {
       return null;
     }
-
+    @SuppressWarnings("unchecked")
+    Map<String, Object> firebaseClaim = (Map<String, Object>) decodedToken.getClaims().get("firebase");
+    String socialType = firebaseClaim != null ? (String) firebaseClaim.get("sign_in_provider") : null;
     String email = decodedToken.getEmail();
     String name = decodedToken.getName();
+    String socialId = decodedToken.getUid();
+
+    // Facebook may not provide email, fallback to uid-based email
+    if (Utils.stringIsEmpty(email)) email = socialId + "@social.login";
+    if (Utils.stringIsEmpty(name)) name = "user_" + socialId;
 
     // Find or create user in DB
-    User user = userRepository.findByEmail(email).orElseGet(() -> {
+    final String finalEmail = email;
+    final String finalName = name;
+    User user = userRepository.findBySocialId(socialId).orElseGet(() -> {
       User newUser = new User();
-      newUser.setUsername(name != null ? name : email);
-      newUser.setEmail(email);
+      newUser.setSocialId(socialId);
+      newUser.setUsername(finalName);
+      newUser.setEmail(finalEmail);
       newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
       newUser.setRole("USER");
+      newUser.setSocialType(socialType);
       return userRepository.save(newUser);
     });
 
