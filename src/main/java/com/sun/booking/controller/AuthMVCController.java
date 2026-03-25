@@ -40,11 +40,6 @@ public class AuthMVCController {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
 
-  @GetMapping("/user-login")
-  public String userLogin() {
-    return "user-login";
-  }
-
   @GetMapping("/login")
   public String login(@RequestParam(value = "error", required = false) String error, Model model) {
     if (error != null) {
