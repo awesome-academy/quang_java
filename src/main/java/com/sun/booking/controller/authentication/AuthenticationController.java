@@ -39,6 +39,7 @@ public class AuthenticationController {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
+  private final HttpSessionSecurityContextRepository httpSessionSecurityContextRepository;
 
   @GetMapping("/social-login")
   public String socialLogin() {
@@ -121,7 +122,7 @@ public class AuthenticationController {
     context.setAuthentication(auth);
     SecurityContextHolder.setContext(context);
 
-    new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+    httpSessionSecurityContextRepository.saveContext(context, request, response);
 
     return "redirect:/home";
   }
