@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.sun.booking.common.httpresponse.ListResponse;
 import com.sun.booking.users.dto.CreateRequest;
 import com.sun.booking.users.dto.UserDTO;
+import com.sun.booking.users.entity.User;
+import com.sun.booking.users.entity.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

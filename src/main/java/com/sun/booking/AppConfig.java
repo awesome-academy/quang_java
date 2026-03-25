@@ -1,19 +1,18 @@
 package com.sun.booking;
 
-
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.sun.booking.tours.Tour;
 import com.sun.booking.tours.dto.TourDTO;
 import com.sun.booking.tours.dto.TourShortDto;
+import com.sun.booking.tours.entity.Tour;
 import com.sun.booking.userreviews.dto.UserReviewDTO;
 import com.sun.booking.userreviews.entity.UserReview;
-import com.sun.booking.users.User;
 import com.sun.booking.users.dto.UserDTO;
+import com.sun.booking.users.entity.User;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.css"/>
+
+    <!-- jQuery (bắt buộc) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- pagination.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"></script> 
     <script>
       // get token from url ?jwtTken and save to localStorage
       const urlParams = new URLSearchParams(window.location.search);
@@ -51,7 +59,10 @@
         </div>
         <div id="tours-management">
           <h2>Tours & Categories Management</h2>
-          <div id="tours-data"></div>
+          <div id="tours-data">
+            <div id="tour-container"></div>
+            <div id="tour-pagination" style="display: flex; justify-content: center; margin-top: 10px;"></div>
+          </div>
         </div>
         <div id="reviews-management">
           <h2>Reviews Management</h2>
@@ -129,9 +140,12 @@
         });
 
         if (panelId === 'user-management') loadUsers();
+        if (panelId === 'tours-management') loadTours();
         
       }
       selectPanel('revenue-management');
+
+      // User management functions
 
       function loadUsers() {
         fetch('/api/users/', {
@@ -294,6 +308,52 @@
         }
       }
       
+      // Tours management functions
+
+      function loadTours() {
+        $('#tour-pagination').pagination({
+          dataSource: '/api/tours/',
+          locator:'items',
+          totalNumberLocator: function(response) {
+            return response.total;
+          },
+          alias: {
+            pageNumber: 'page',
+            pageSize: 'size'
+          },
+          pageSize: 5,
+          ajax: {
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader(
+                'Authorization',
+                'Bearer ' + localStorage.getItem('jwtToken')
+              );
+            }
+          },
+          callback: function(data, pagination) {
+            renderTours(data);
+          }
+        });
+      }
+
+      function renderTours(tour) {
+        const container = document.getElementById("tour-container");
+        let html = '<table border="1" style="width:100%;border-collapse:collapse;"><tr>';
+          Object.keys(tour[0]).forEach(key => {
+            html += `<th>${key}</th>`;
+          });
+          html += '</tr>';
+          tour.forEach(t => {
+            html += '<tr>';
+            Object.values(t).forEach(val => {
+              html += `<td>${val === null ? '' : val}</td>`;
+            });
+            html += '</tr>';
+          });
+          html += '</table>';
+        container.innerHTML = html;
+      }
+
       function logout() {
         localStorage.removeItem('jwtToken');
         window.location.href = '/login';

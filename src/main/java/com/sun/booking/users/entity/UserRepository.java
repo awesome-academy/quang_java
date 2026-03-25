@@ -1,4 +1,4 @@
-package com.sun.booking.users;
+package com.sun.booking.users.entity;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

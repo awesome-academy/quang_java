@@ -1,4 +1,4 @@
-package com.sun.booking.tours;
+package com.sun.booking.tours.entity;
 
 import com.sun.booking.categories.Category;
 import jakarta.persistence.*;

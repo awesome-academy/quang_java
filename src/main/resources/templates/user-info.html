@@ -22,7 +22,6 @@
       <p>No reviews found.</p>
     </div>
     <div th:each="review : ${reviews.content}" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-      <p><strong>Review ID:</strong> <span th:text="${review.userId}">Review ID</span></p>
       <p th:if="${review.tour != null}"><strong>Tour:</strong> <span th:text="${review.tour.title}">Tour Title</span> - <span th:text="${review.tour.description}">Description</span> - <span th:text="${review.tour.price}">Price</span></p>
       <!-- rating is star -->
       <p><strong>Rating:</strong> 

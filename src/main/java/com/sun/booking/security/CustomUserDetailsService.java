@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.sun.booking.users.*;
+import com.sun.booking.users.entity.User;
+import com.sun.booking.users.entity.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

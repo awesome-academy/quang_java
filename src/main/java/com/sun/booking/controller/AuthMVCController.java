@@ -4,8 +4,6 @@ import com.sun.booking.auth.dto.UserDTO;
 import com.sun.booking.common.Utils;
 import com.sun.booking.jwt.JwtService;
 import com.sun.booking.security.CustomUserDetails;
-import com.sun.booking.users.User;
-import com.sun.booking.users.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +25,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sun.booking.users.dto.RegisterRequest;
+import com.sun.booking.users.entity.User;
+import com.sun.booking.users.entity.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,8 +79,8 @@ public class AuthMVCController {
 
   @PostMapping("/auth/social-callback")
   public String socialCallback(@RequestParam("token") String token,
-                               HttpServletRequest request,
-                               HttpServletResponse response) {
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
     UserDTO userDTO;
     try {
       userDTO = jwtService.extractUser(token);
