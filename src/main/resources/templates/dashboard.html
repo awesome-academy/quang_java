@@ -60,6 +60,7 @@
         <div id="tours-management">
           <h2>Tours & Categories Management</h2>
           <div id="tours-data">
+            <button onclick="showFormAddTour()" style="margin-bottom: 10px;">Add Tour</button>
             <div id="tour-container"></div>
             <div id="tour-pagination" style="display: flex; justify-content: center; margin-top: 10px;"></div>
           </div>
@@ -116,6 +117,66 @@
       </form>
     </div>
 
+    <div id="add-tour-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc;">
+      <!-- form add tour with name, description, price, category, image -->
+      <form id="add-tour-form-element">
+        <div>
+          <label for="add-tour-title">Title:</label>
+          <input type="text" id="add-tour-title" name="title" required />
+        </div>
+        <div>
+          <label for="add-tour-description">Description:</label>
+          <textarea id="add-tour-description" name="description" required></textarea>
+        </div>
+        <div>
+          <label for="add-tour-price">Price:</label>
+          <input type="number" id="add-tour-price" name="price" required />
+        </div>
+        <div>
+          <label for="add-tour-category">Category:</label>
+          <select id="add-tour-category" name="categoryId" required>
+            <!-- load categories from /api/categories/ and fill options -->
+          </select>
+        </div>
+        <div>
+          <label for="add-tour-image">Image URL:</label>
+          <input type="text" id="add-tour-image" name="imageUrl" required />
+        </div>
+        <button type="button" onclick="addTour()">Save</button>
+        <button type="button" onclick="document.getElementById('add-tour-form').style.display='none';">Cancel</button>
+      </form>
+    </div>
+
+    <div id="edit-tour-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc;">
+      <form id="edit-tour-form-element">
+        <input type="hidden" id="edit-tour-id" name="id" />
+        <div>
+          <label for="edit-tour-title">Title:</label>
+          <input type="text" id="edit-tour-title" name="title" required />
+        </div>
+        <div>
+          <label for="edit-tour-description">Description:</label>
+          <textarea id="edit-tour-description" name="description" required></textarea>
+        </div>
+        <div>
+          <label for="edit-tour-price">Price:</label>
+          <input type="number" id="edit-tour-price" name="price" required />
+        </div>
+        <div>
+          <label for="edit-tour-category">Category:</label>
+          <select id="edit-tour-category" name="categoryId" required>
+            <!-- load categories from /api/categories/ and fill options -->
+          </select>
+        </div>
+        <div>
+          <label for="edit-tour-image">Image URL:</label>
+          <input type="text" id="edit-tour-image" name="imageUrl" required />
+        </div>
+        <button type="button" onclick="updateTour()">Save</button>
+        <button type="button" onclick="document.getElementById('edit-tour-form').style.display='none';">Cancel</button>
+      </form>
+    </div>
+
     <script>
       function selectPanel(panelId) {
 
@@ -141,7 +202,6 @@
 
         if (panelId === 'user-management') loadUsers();
         if (panelId === 'tours-management') loadTours();
-        
       }
       selectPanel('revenue-management');
 
@@ -342,16 +402,38 @@
           Object.keys(tour[0]).forEach(key => {
             html += `<th>${key}</th>`;
           });
+          html += '<th>Actions</th>';
           html += '</tr>';
           tour.forEach(t => {
             html += '<tr>';
             Object.values(t).forEach(val => {
               html += `<td>${val === null ? '' : val}</td>`;
             });
+            html += `<td>
+                        <button onclick="showFormUpdateTour(${t.id})">Edit</button> 
+                        <button onclick="deleteTour(${t.id})">Delete</button>
+                      </td>`;
             html += '</tr>';
           });
           html += '</table>';
         container.innerHTML = html;
+      }
+
+      function showFormAddTour() {
+        document.getElementById('add-tour-form').style.display = 'block';
+      }
+
+      function addTour() {
+      }
+
+      function showFormUpdateTour(tourId) {
+        document.getElementById('edit-tour-form').style.display = 'block';
+      }
+
+      function updateTour() {
+      }
+
+      function deleteTour(tourId) {
       }
 
       function logout() {

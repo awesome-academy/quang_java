@@ -17,7 +17,6 @@ import com.sun.booking.common.httpresponse.ListResponse;
 import com.sun.booking.tours.TourService;
 import com.sun.booking.tours.dto.TourDTO;
 import com.sun.booking.users.UserService;
-import com.sun.booking.users.dto.UserDTO;
 
 import lombok.RequiredArgsConstructor;
 
