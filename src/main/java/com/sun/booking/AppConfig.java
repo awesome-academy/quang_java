@@ -66,6 +66,7 @@ public class AppConfig {
         if(source instanceof User && destination instanceof UserDTO) {
           User user = (User) source;
           UserDTO userDTO = (UserDTO) destination;
+          userDTO.setId(user.getId());
           userDTO.setUsername(user.getUsername());
           userDTO.setEmail(user.getEmail());
           userDTO.setSocialId(user.getSocialId());
