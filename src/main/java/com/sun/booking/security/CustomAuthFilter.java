@@ -104,8 +104,10 @@ public class CustomAuthFilter extends OncePerRequestFilter {
             context.setAuthentication(auth);
             SecurityContextHolder.setContext(context);
 
-            // Save to HttpSession so session-based security works
-            new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+            // Save to HttpSession only if not /api/ (stateless chain)
+            if (!request.getServletPath().startsWith("/api/")) {
+                new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+            }
         }
 
         filterChain.doFilter(request, response);
