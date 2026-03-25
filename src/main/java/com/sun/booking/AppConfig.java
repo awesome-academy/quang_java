@@ -1,6 +1,5 @@
 package com.sun.booking;
 
-import java.math.BigDecimal;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +12,10 @@ import com.sun.booking.tours.dto.TourDTO;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 public class AppConfig {
@@ -59,5 +59,10 @@ public class AppConfig {
         return destination;
       }
     };
+  }
+
+  @Bean
+  public HttpSessionSecurityContextRepository httpSessionSecurityContextRepository() {
+    return new HttpSessionSecurityContextRepository();
   }
 }
