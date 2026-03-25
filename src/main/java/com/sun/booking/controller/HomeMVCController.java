@@ -16,6 +16,8 @@ import com.sun.booking.common.Utils;
 import com.sun.booking.common.httpresponse.ListResponse;
 import com.sun.booking.tours.TourService;
 import com.sun.booking.tours.dto.TourDTO;
+import com.sun.booking.users.UserService;
+import com.sun.booking.users.dto.UserDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class HomeMVCController {
 
   private final TourService tourService;
+  private final UserService userService;
 
   @GetMapping("/home")
   public String homePage(Authentication authentication, Model model,
@@ -58,7 +61,9 @@ public class HomeMVCController {
       model.addAttribute("totalPages", tourList.getTotalPages());
       return "feed";
     } else {
+      // TODO return revenue data
       return "dashboard";
     }
   }
+
 }

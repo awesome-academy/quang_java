@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.sun.booking.jwt.JwtService;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final CustomAuthFilter customAuthFilter;
+    private final JwtService jwtService;
 
     // API security: stateless, JWT, returns 401/403 JSON
     @Bean
@@ -59,7 +62,7 @@ public class SecurityConfig {
             )
             .formLogin(formLogin -> formLogin
                 .loginPage("/login")
-                .defaultSuccessUrl("/home", true)
+                .successHandler(new CustomAuthSuccessHandler(jwtService))
                 .failureHandler(new MyAuthenticationFailureHandler())
                 .permitAll()
             )
