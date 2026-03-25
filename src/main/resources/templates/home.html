@@ -7,7 +7,7 @@
 </head>
 <body>
   <div id="user-info">
-    <p>Welcome, <span th:text="${username}">User</span>!</p>
+    <p>Welcome, <a th:href="@{/user/info}" th:text="${username}">User</a>!</p>
     <form th:action="@{/logout}" method="post" style="display:inline;">
       <button type="submit">Logout</button>
     </form>
