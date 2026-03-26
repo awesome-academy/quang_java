@@ -1,4 +1,4 @@
-package com.sun.booking.users;
+package com.sun.booking.users.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

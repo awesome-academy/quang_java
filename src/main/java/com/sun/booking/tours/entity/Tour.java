@@ -1,12 +1,13 @@
-package com.sun.booking.tours;
+package com.sun.booking.tours.entity;
 
-import com.sun.booking.categories.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.sun.booking.categories.entity.Category;
 
 @Entity
 @Table(name = "tours")
@@ -27,6 +28,9 @@ public class Tour {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;

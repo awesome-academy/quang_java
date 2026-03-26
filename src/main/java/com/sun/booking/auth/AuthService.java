@@ -12,8 +12,8 @@ import com.sun.booking.auth.dto.UserDTO;
 import com.sun.booking.common.Utils;
 import com.sun.booking.firebase.FirebaseService;
 import com.sun.booking.jwt.JwtService;
-import com.sun.booking.users.User;
-import com.sun.booking.users.UserRepository;
+import com.sun.booking.users.entity.User;
+import com.sun.booking.users.entity.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
