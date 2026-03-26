@@ -55,11 +55,19 @@
         </div>
         <div id="user-management">
           <h2>Users Management</h2>
-          <div id="user-data"></div>
+          <div id="user-container"></div>
+          <div id="user-pagination" style="display: flex; justify-content: center; margin-top: 10px;"></div>
         </div>
         <div id="tours-management">
           <h2>Tours & Categories Management</h2>
+          <div id="categories-data">
+            <h3>Categories Management</h3>
+            <button onclick="showFormAddCategory()" style="margin-bottom: 10px;">Add Category</button>
+            <div id="category-container"></div>
+            <div id="category-pagination" style="display: flex; justify-content: center; margin-top: 10px;"></div>
+          </div>
           <div id="tours-data">
+            <h3>Tours Management</h3>
             <button onclick="showFormAddTour()" style="margin-bottom: 10px;">Add Tour</button>
             <div id="tour-container"></div>
             <div id="tour-pagination" style="display: flex; justify-content: center; margin-top: 10px;"></div>
@@ -76,7 +84,6 @@
       </div>
     </div>
 
-    <!-- user add form with username, email, password, password confirmation -->
     <div id="add-user-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc;">
       <form id="add-user-form-element">
         <div>
@@ -100,7 +107,6 @@
       </form>
     </div>
 
-    <!-- User edit form with user, email-->
     <div id="edit-user-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc;">
       <form id="edit-user-form-element">
         <input type="hidden" id="edit-user-id" name="id" />
@@ -177,6 +183,37 @@
       </form>
     </div>
 
+    <div id="add-category-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc;">
+      <form id="add-category-form-element">
+        <div>
+          <label for="add-category-name">Name:</label>
+          <input type="text" id="add-category-name" name="name" required />
+        </div>
+        <div>
+          <label for="add-category-description">Description:</label>
+          <textarea id="add-category-description" name="description" required></textarea>
+        </div>
+        <button type="button" onclick="addCategory()">Save</button>
+        <button type="button" onclick="document.getElementById('add-category-form').style.display='none';">Cancel</button>
+      </form>
+    </div>
+
+    <div id="update-category-form" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid #ccc;">
+      <form id="update-category-form-element">
+        <input type="hidden" id="edit-category-id" name="id" />
+        <div>
+          <label for="edit-category-name">Name:</label>
+          <input type="text" id="edit-category-name" name="name" required />
+        </div>
+        <div>
+          <label for="edit-category-description">Description:</label>
+          <textarea id="edit-category-description" name="description" required></textarea>
+        </div>
+        <button type="button" onclick="updateCategory()">Save</button>
+        <button type="button" onclick="document.getElementById('update-category-form').style.display='none';">Cancel</button>
+      </form>
+    </div>
+
     <script>
       function selectPanel(panelId) {
 
@@ -201,54 +238,62 @@
         });
 
         if (panelId === 'user-management') loadUsers();
-        if (panelId === 'tours-management') loadTours();
+        if (panelId === 'tours-management') {
+          getAllCategories();
+          loadCategories(); 
+          loadTours();
+        }
       }
       selectPanel('revenue-management');
 
       // User management functions
 
       function loadUsers() {
-        fetch('/api/users/', {
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+        $('#user-pagination').pagination({
+          dataSource: '/api/users/',
+          locator:'data.content',
+          totalNumberLocator: (response) => response.data.totalElements,
+          alias: {
+            pageNumber: 'page',
+            pageSize: 'size'
+          },
+          pageSize: 5,
+          ajax: {
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader(
+                'Authorization',
+                'Bearer ' + localStorage.getItem('jwtToken')
+              );
             }
-          })
-          .then(res => res.json())
-          .then(data => {
+          },
+          callback: function(data, pagination) {
             console.log("Users data:", data);
-            // Extract the content array from the paginated response
-            const users = data && data.data && Array.isArray(data.data.content) ? data.data.content : [];
-            const userDataDiv = document.getElementById('user-data');
-            // add button to add user
-            userDataDiv.innerHTML = '<button onclick="showFormAddUser()">Add User</button><br/><br/>';
-            if (users.length > 0) {
-              let html = '<table border="1" style="width:100%;border-collapse:collapse;"><tr>';
-              Object.keys(users[0]).forEach(key => {
-                html += `<th>${key}</th>`;
-              });
-              html += '<th>Actions</th>';
-              html += '</tr>';
-              users.forEach(user => {
-                html += '<tr>';
-                Object.values(user).forEach(val => {
-                  html += `<td>${val === null ? '' : val}</td>`;
-                });
-                html += `<td>
-                          <button onclick="showFormUpdateUser(${user.id})">Edit</button> 
-                          <button onclick="deleteUser(${user.id})">Delete</button>
-                        </td>`;
-                html += '</tr>';
-              });
-              html += '</table>';
-              userDataDiv.innerHTML += html;
-            } else {
-              userDataDiv.innerHTML = '<p>No users found.</p>';
-            }
-          })
-          .catch(err => {
-            document.getElementById('user-data').textContent = 'Error loading users: ' + err;
-            console.error("Error loading users:", err);
+            renderUsers(data);
+          }
+        });
+      }
+
+      function renderUsers(users) {
+        const container = document.getElementById("user-container");
+        let html = '<table border="1" style="width:100%;border-collapse:collapse;"><tr>';
+          Object.keys(users[0]).forEach(key => {
+            html += `<th>${key}</th>`;
           });
+          html += '<th>Actions</th>';
+          html += '</tr>';
+          users.forEach(u => {
+            html += '<tr>';
+            Object.values(u).forEach(val => {
+              html += `<td>${val === null ? '' : val}</td>`;
+            });
+            html += `<td>
+                        <button onclick="showFormUpdateUser(${u.id})">Edit</button> 
+                        <button onclick="deleteUser(${u.id})">Delete</button>
+                      </td>`;
+            html += '</tr>';
+          });
+          html += '</table>';
+        container.innerHTML = html;
       }
 
       function showFormAddUser() {
@@ -368,15 +413,174 @@
         }
       }
       
-      // Tours management functions
+      // Tours & Categories management functions
+
+      function getAllCategories() {
+        fetch('/api/categories/all', {
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            }
+          })
+          .then(res => res.json())
+          .then(data => {
+            console.log("All categories data:", data);
+            const categories = data && data.data ? data.data : [];
+            const categorySelects = document.querySelectorAll('#add-tour-category, #edit-tour-category');
+            categorySelects.forEach(select => {
+              select.innerHTML = '';
+              categories.forEach(category => {  
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                select.appendChild(option);
+              });
+            });
+          })
+          .catch(err => {
+            alert('Error loading categories: ' + err);
+            console.error("Error loading categories:", err);
+          });
+      }
+
+      function loadCategories() {
+        $('#category-pagination').pagination({
+          dataSource: '/api/categories/',
+          locator:'data.content',
+          totalNumberLocator: (response) => response.data.totalElements,
+          alias: {
+            pageNumber: 'page',
+            pageSize: 'size'
+          },
+          pageSize: 5,
+          ajax: {
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader(
+                'Authorization',
+                'Bearer ' + localStorage.getItem('jwtToken')
+              );
+            }
+          },
+          callback: function(data, pagination) {
+            console.log("Categories data:", data);
+            renderCategories(data);
+          }
+        });
+      }
+
+      function renderCategories(categories) {
+        const container = document.getElementById("category-container");
+        let html = '<table border="1" style="width:100%;border-collapse:collapse;"><tr>';
+          Object.keys(categories[0]).forEach(key => {
+            html += `<th>${key}</th>`;
+          });
+          html += '<th>Actions</th>';
+          html += '</tr>';
+          categories.forEach(c => {
+            html += '<tr>';
+            Object.values(c).forEach(val => {
+              html += `<td>${val === null ? '' : val}</td>`;
+            });
+            html += `<td>
+                        <button onclick="showFormUpdateCategory(${c.id})">Edit</button> 
+                        <button onclick="deleteCategory(${c.id})">Delete</button>
+                      </td>`;
+            html += '</tr>';
+          });
+          html += '</table>';
+        container.innerHTML = html;
+      }
+
+      function showFormAddCategory() {
+        document.getElementById('add-category-form').style.display = 'block';
+      }
+
+      function addCategory() {
+        fetch('/api/categories/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            },
+            body: JSON.stringify({
+              name: document.getElementById('add-category-name').value,
+              description: document.getElementById('add-category-description').value
+            })  
+          })
+          .then(res => {
+            if (res.ok) {
+              alert('Category added successfully'); 
+              document.getElementById('add-category-form').style.display = 'none';
+              loadCategories();
+              getAllCategories();
+            } else {
+              alert('Failed to add category');
+            }
+          });
+      }
+
+      function showFormUpdateCategory(categoryId) {
+        console.log("Show form to edit category with ID:", categoryId);
+        document.getElementById('update-category-form').style.display = 'block';
+        fetch('/api/categories/detail/' + categoryId, {
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            }
+          })
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById('edit-category-id').value = data.data.id;
+            document.getElementById('edit-category-name').value = data.data.name;
+            document.getElementById('edit-category-description').value = data.data.description;
+          });
+      }
+
+      function updateCategory() {
+        fetch('/api/categories/update/' + document.getElementById('edit-category-id').value, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            },
+            body: JSON.stringify({
+              name: document.getElementById('edit-category-name').value,
+              description: document.getElementById('edit-category-description').value
+            })
+          })
+          .then(res => {
+            if (res.ok) {
+              alert('Category updated successfully');
+              document.getElementById('update-category-form').style.display = 'none';
+              loadCategories();
+              getAllCategories();
+            } else {
+              alert('Failed to update category');
+            }
+          });
+      }
+
+      function deleteCategory(categoryId) {
+        fetch('/api/categories/delete/' + categoryId, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            }
+          })
+          .then(res => {
+            if (res.ok) {
+              alert('Category deleted successfully');
+              loadCategories();
+              getAllCategories();
+            } else {
+              alert('Failed to delete category');
+            }
+          });
+      }
 
       function loadTours() {
         $('#tour-pagination').pagination({
           dataSource: '/api/tours/',
-          locator:'items',
-          totalNumberLocator: function(response) {
-            return response.total;
-          },
+          locator:'data.content',
+          totalNumberLocator: (response) => response.data.totalElements,
           alias: {
             pageNumber: 'page',
             pageSize: 'size'
@@ -400,14 +604,21 @@
         const container = document.getElementById("tour-container");
         let html = '<table border="1" style="width:100%;border-collapse:collapse;"><tr>';
           Object.keys(tour[0]).forEach(key => {
-            html += `<th>${key}</th>`;
+            // change key imageUrl to Image
+            if (key === 'imageUrl') html += `<th>Image</th>`;
+            else  html += `<th>${key}</th>`;
           });
           html += '<th>Actions</th>';
           html += '</tr>';
           tour.forEach(t => {
             html += '<tr>';
-            Object.values(t).forEach(val => {
-              html += `<td>${val === null ? '' : val}</td>`;
+            Object.keys(t).forEach(key => {
+              // load image from t.imageUrl and show in column image
+              if (key === 'imageUrl') {
+                html += `<td><img src="${t[key]}" alt="Tour Image" style="width:100px;height:auto;"></td>`;
+              } else {
+                html += `<td>${t[key] === null ? '' : t[key]}</td>`;
+              }
             });
             html += `<td>
                         <button onclick="showFormUpdateTour(${t.id})">Edit</button> 
@@ -424,16 +635,91 @@
       }
 
       function addTour() {
+        fetch('/api/tours/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            },
+            body: JSON.stringify({
+              title: document.getElementById('add-tour-title').value,
+              description: document.getElementById('add-tour-description').value,
+              price: parseFloat(document.getElementById('add-tour-price').value),
+              categoryId: parseInt(document.getElementById('add-tour-category').value),
+              imageUrl: document.getElementById('add-tour-image').value
+            })
+          })
+          .then(res => {
+            if (res.ok) {
+              alert('Tour added successfully');
+              document.getElementById('add-tour-form').style.display = 'none';
+              loadTours();
+            } else {
+              alert('Failed to add tour');
+            }
+          });
       }
 
       function showFormUpdateTour(tourId) {
+        console.log("Show form to edit tour with ID:", tourId);
         document.getElementById('edit-tour-form').style.display = 'block';
+        fetch('/api/tours/detail/' + tourId, {
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            }
+          })
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById('edit-tour-id').value = data.data.id;
+            document.getElementById('edit-tour-title').value = data.data.title;
+            document.getElementById('edit-tour-description').value = data.data.description;
+            document.getElementById('edit-tour-price').value = data.data.price;
+            document.getElementById('edit-tour-category').value = data.data.categoryId;
+            document.getElementById('edit-tour-image').value = data.data.imageUrl;
+          });
       }
 
       function updateTour() {
+        fetch('/api/tours/update/' + document.getElementById('edit-tour-id').value, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            },
+            body: JSON.stringify({
+              title: document.getElementById('edit-tour-title').value,
+              description: document.getElementById('edit-tour-description').value,
+              price: parseFloat(document.getElementById('edit-tour-price').value),
+              categoryId: parseInt(document.getElementById('edit-tour-category').value),
+              imageUrl: document.getElementById('edit-tour-image').value
+            })
+          })
+          .then(res => {
+            if (res.ok) {
+              alert('Tour updated successfully');
+              document.getElementById('edit-tour-form').style.display = 'none';
+              loadTours();
+            } else {
+              alert('Failed to update tour');
+            }
+          });
       }
 
       function deleteTour(tourId) {
+        fetch('/api/tours/delete/' + tourId, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('jwtToken')
+            }
+          })
+          .then(res => {
+            if (res.ok) {
+              alert('Tour deleted successfully');
+              loadTours();
+            } else {
+              alert('Failed to delete tour');
+            }
+          });
       }
 
       function logout() {

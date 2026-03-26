@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sun.booking.common.httpresponse.BaseResponse;
 import com.sun.booking.common.httpresponse.ListResponse;
 import com.sun.booking.common.httpresponse.SuccessResponse;
-import com.sun.booking.tours.entity.Tour;
+import com.sun.booking.tours.dto.TourDTO;
 import com.sun.booking.tours.entity.TourRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -28,26 +34,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class TourController {
   private final TourService tourService;
-  private final TourRepository tourRepository;
 
-  // @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-  // @GetMapping("/")
-  // public BaseResponse<ListResponse> getListTour(@RequestParam(defaultValue = "0") int page,
-  //                           @RequestParam(defaultValue = "5") int size) {
-  //   ListResponse result = tourService.getAllTours(page, size);
-  //     return new SuccessResponse<ListResponse>(result);
-  // }
-  
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @GetMapping("/")
-  public Map<String, Object> getListTour(@RequestParam(defaultValue = "0") int page,
+  public BaseResponse<ListResponse> getListTour(@RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "5") int size) {
     ListResponse result = tourService.getAllTours(page, size);
-    //   return new SuccessResponse<ListResponse>(result);
-    Map<String, Object> response = new HashMap<>();
-    response.put("items", result.getContent());
-    response.put("total", result.getTotalElements());
-    return response;
+      return new SuccessResponse<ListResponse>(result);
   }
-  
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PostMapping("/create")
+  public BaseResponse<TourDTO> createTour(@RequestBody TourDTO input) {
+    TourDTO result = tourService.createTour(input);
+    return new SuccessResponse<TourDTO>(result);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @GetMapping("/detail/{id}")
+  public BaseResponse<TourDTO> getTourDetail(@PathVariable Long id) {
+    TourDTO result = tourService.getTourDetail(id);
+    return new SuccessResponse<TourDTO>(result);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PutMapping("/update/{id}")
+  public BaseResponse<TourDTO> updateTour(@PathVariable Long id, @RequestBody TourDTO input) {
+    TourDTO result = tourService.updateTour(id, input);
+    return new SuccessResponse<TourDTO>(result);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @DeleteMapping("/delete/{id}")
+  public BaseResponse<Boolean> deleteTour(@PathVariable Long id) {
+    boolean isDeleted = tourService.deleteTour(id);
+    return new SuccessResponse<Boolean>(isDeleted);
+  }
 }

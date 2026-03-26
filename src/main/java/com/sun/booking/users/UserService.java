@@ -26,6 +26,8 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   
   public ListResponse getAllUsers(int page, int size) {
+    // start from page 1 for client, but PageRequest starts from 0
+    page = page > 0 ? page - 1 : 0;
     PageRequest pageable = PageRequest.of(page, size);
     Page<User> users = userRepository.findAllActive(pageable);
     List<UserDTO> content = users.stream()

@@ -17,4 +17,5 @@ public class TourDTO {
   private BigDecimal price;
   private BigDecimal rating;
   private Integer reviewsCount;
+  private String imageUrl;
 }

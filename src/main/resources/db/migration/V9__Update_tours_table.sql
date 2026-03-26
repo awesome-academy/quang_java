@@ -1,0 +1,1 @@
+ALTER TABLE tours ADD COLUMN image_url VARCHAR(255);

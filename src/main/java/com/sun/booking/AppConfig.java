@@ -1,11 +1,14 @@
 package com.sun.booking;
 
+import org.checkerframework.checker.units.qual.t;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.sun.booking.categories.dto.CategoryDTO;
+import com.sun.booking.categories.entity.Category;
 import com.sun.booking.tours.dto.TourDTO;
 import com.sun.booking.tours.dto.TourShortDto;
 import com.sun.booking.tours.entity.Tour;
@@ -60,6 +63,7 @@ public class AppConfig {
           tourDTO.setPrice(tour.getPrice());
           tourDTO.setRating(tour.getRating());
           tourDTO.setReviewsCount(tour.getReviewsCount());
+          tourDTO.setImageUrl(tour.getImageUrl());
         }
 
         if(source instanceof User && destination instanceof UserDTO) {
@@ -84,6 +88,14 @@ public class AppConfig {
           reviewDTO.setTour(tourShortDto);
           reviewDTO.setRating(review.getRating());
           reviewDTO.setContent(review.getContent());
+        }
+
+        if(source instanceof Category && destination instanceof com.sun.booking.categories.dto.CategoryDTO) {
+          Category category = (Category) source;
+          CategoryDTO categoryDTO = (CategoryDTO) destination;
+          categoryDTO.setId(category.getId());
+          categoryDTO.setName(category.getName());
+          categoryDTO.setDescription(category.getDescription());
         }
 
         return destination;
