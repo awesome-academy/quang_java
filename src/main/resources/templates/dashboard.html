@@ -75,7 +75,8 @@
         </div>
         <div id="reviews-management">
           <h2>Reviews Management</h2>
-          <div id="reviews-data"></div>
+          <div id="reviews-container"></div>
+          <div id="reviews-pagination" style="display: flex; justify-content: center; margin-top: 10px;"></div>
         </div>
         <div id="bookings-management">
           <h2>Bookings Management</h2>
@@ -243,6 +244,7 @@
           loadCategories(); 
           loadTours();
         }
+        if(panelId === 'reviews-management') loadUserReviews();
       }
       selectPanel('revenue-management');
 
@@ -720,6 +722,56 @@
               alert('Failed to delete tour');
             }
           });
+      }
+
+      // Reviews management functions
+
+      function loadUserReviews() {
+        $('#reviews-pagination').pagination({
+          dataSource: '/api/reviews/all',
+          locator:'data.content',
+          totalNumberLocator: (response) => response.data.totalElements,
+          alias: {
+            pageNumber: 'page',
+            pageSize: 'size'
+          },
+          pageSize: 5,
+          ajax: {
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader(
+                'Authorization',
+                'Bearer ' + localStorage.getItem('jwtToken')
+              );
+            }
+          },
+          callback: function(data, pagination) {
+            console.log("Reviews data:", data);
+            renderReviews(data);
+          }
+        });
+      }
+
+      function renderReviews(reviews) {
+        const container = document.getElementById("reviews-container");
+        let html = '<table border="1" style="width:100%;border-collapse:collapse;"><tr>';
+          Object.keys(reviews[0]).forEach(key => {
+            html += `<th>${key}</th>`;
+          });
+          html += '</tr>';
+          reviews.forEach(r => {
+            html += '<tr>';
+            Object.values(r).forEach(val => {
+              // tour is object, show tour.title
+              if (val && typeof val === 'object' && val.title) {
+                html += `<td>${val.title} - ${val.description} - ${val.price}</td>`;
+              } else {
+                html += `<td>${val === null ? '' : val}</td>`;
+              }
+            });
+            html += '</tr>';
+          });
+          html += '</table>';
+        container.innerHTML = html;
       }
 
       function logout() {

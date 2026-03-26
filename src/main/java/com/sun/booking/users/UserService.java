@@ -42,6 +42,11 @@ public class UserService {
         .build();
   }
 
+  public User getUserById(Long id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+  }
+
   public UserDTO getUserDetail(Long id) {
     User user = userRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("User not found with id: " + id));

@@ -39,6 +39,10 @@ public class TourService {
             .build();
   }
 
+  public Tour getTourById(Long id) {
+    return tourRepository.findById(id)
+      .orElseThrow(() -> new RuntimeException("Tour not found with id: " + id));
+  }
 
   public TourDTO getTourDetail(Long id) {
     Tour tour = tourRepository.findById(id)
