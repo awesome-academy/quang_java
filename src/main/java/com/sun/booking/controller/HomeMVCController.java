@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class HomeMVCController {
 
   private final TourService tourService;
-  private final UserService userService;
 
   @GetMapping("/home")
   public String homePage(Authentication authentication, Model model,

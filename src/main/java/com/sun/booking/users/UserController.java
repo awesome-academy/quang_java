@@ -12,6 +12,7 @@ import com.sun.booking.users.dto.UserDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
@@ -55,14 +56,14 @@ public class UserController {
 
   @PreAuthorize("hasAnyRole('ADMIN')")
   @PostMapping("/create")
-  public BaseResponse<UserDTO> createUser(@RequestBody CreateRequest userDTO) {
+  public BaseResponse<UserDTO> createUser(@Valid @RequestBody CreateRequest userDTO) {
     UserDTO result = userService.createUser(userDTO);
     return new SuccessResponse<UserDTO>(result);
   }
 
   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
   @PutMapping("/update/{id}")
-  public BaseResponse<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+  public BaseResponse<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
     UserDTO result = userService.updateUser(id, userDTO);
     return new SuccessResponse<UserDTO>(result);
   }

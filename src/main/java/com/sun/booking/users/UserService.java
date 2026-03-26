@@ -65,9 +65,6 @@ public class UserService {
   }
 
   public boolean deleteUser(Long id) {
-    if (!userRepository.existsById(id)) {
-      throw new RuntimeException("User not found with id: " + id);
-    }
     int rowsAffected = userRepository.deleteUserById(id);
     return rowsAffected > 0;
   }
