@@ -1,7 +1,8 @@
 package com.sun.booking.bookings;
 
-import com.sun.booking.tours.Tour;
-import com.sun.booking.users.User;
+import com.sun.booking.tours.entity.Tour;
+import com.sun.booking.users.entity.User;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

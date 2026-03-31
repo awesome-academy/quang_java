@@ -9,10 +9,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sun.booking.common.httpresponse.ListResponse;
 import com.sun.booking.security.CustomUserDetails;
+import com.sun.booking.tours.TourService;
+import com.sun.booking.tours.dto.TourDTO;
 import com.sun.booking.userreviews.UserReviewService;
 import com.sun.booking.userreviews.dto.UserReviewDTO;
 import com.sun.booking.users.UserService;
@@ -26,6 +29,7 @@ public class UserMVCController {
   
   private final UserService userService;
   private final UserReviewService userReviewService;
+  private final TourService tourService;
 
   @GetMapping("/user/info")
   public String getUserInfo(Authentication authentication, Model model,
@@ -72,4 +76,20 @@ public class UserMVCController {
     return "user-info";
   }
   
+  @GetMapping("/tour/{id}")
+  public String getTourInfo(@PathVariable Long id, Model model) {
+    // Implement the logic to get tour information by id
+    TourDTO tour = tourService.getTourDetail(id);
+
+    Map<String, Object> tourMap = new HashMap<>();
+    tourMap.put("id", tour.getId());
+    tourMap.put("title", tour.getTitle());
+    tourMap.put("imageUrl", tour.getImageUrl());
+    tourMap.put("description", tour.getDescription());
+    tourMap.put("price", tour.getPrice());
+    tourMap.put("categoryId", tour.getCategoryId());
+    model.addAttribute("tour", tourMap);
+
+    return "tour-info";
+  }
 }

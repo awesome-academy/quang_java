@@ -5,10 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Feed</title>
     <link rel="icon" href="data:,">
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const tokenElement = document.querySelector("#user-info p");
+        if (tokenElement) {
+          const token = tokenElement.textContent.trim();
+          if (token) {
+            localStorage.setItem("jwtToken", token);
+          }
+        }
+
+        const userIdElement = document.querySelector("#user-info p:nth-child(2)");
+        if (userIdElement) {
+          const userId = userIdElement.textContent.trim();
+          if (userId) {
+            localStorage.setItem("userId", userId);
+          }
+        }
+      });
+    </script>
 </head>
 <body>
-
-  <div id="user-info" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px; justify-content: flex-end;">
+  <div id="user-info" hidden>
+    <p th:text="${jwtToken}"></p>
+    <p th:text="${userId}"></p>
+  </div>
+  <div id="user-info" style="display: flex; align-items: center; gap: 10px; justify-content: flex-end;">
     <p>Welcome,<a th:href="@{/user/info}" th:text="${username}">User</a>!</p>
     <form th:action="@{/logout}" method="post" style="display:inline;">
       <button type="submit">Logout</button>
@@ -34,7 +56,7 @@
   <div id="feed-content" style="margin-top: 30px;">
     <div th:each="tour : ${tours}">
       <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; display: flex; gap: 15px; height: 110px; overflow: hidden;">
-        <img src="https://picsum.photos/120" alt="Tour Image" style="width: 150px; height: 110px; object-fit: cover;">
+        <img th:src="${tour.imageUrl}" alt="Tour Image" style="width: 150px; height: 110px; object-fit: cover;">
         <div style="overflow: hidden;">
           <h3 style="margin: 0px 0px 5px 0px; text-decoration: underline;"><a th:href="@{/tour/{id}(id=${tour.id})}" th:text="${tour.title}" style="margin: 0 0 3px 0; text-decoration: none; color: inherit;">Tour Title</a></h3>
           <p th:text="${tour.description}" style="margin: 0 0 3px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tour Description</p>

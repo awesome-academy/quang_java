@@ -1,19 +1,21 @@
 package com.sun.booking;
 
-
+import org.checkerframework.checker.units.qual.t;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.sun.booking.tours.Tour;
+import com.sun.booking.categories.dto.CategoryDTO;
+import com.sun.booking.categories.entity.Category;
 import com.sun.booking.tours.dto.TourDTO;
 import com.sun.booking.tours.dto.TourShortDto;
+import com.sun.booking.tours.entity.Tour;
 import com.sun.booking.userreviews.dto.UserReviewDTO;
 import com.sun.booking.userreviews.entity.UserReview;
-import com.sun.booking.users.User;
 import com.sun.booking.users.dto.UserDTO;
+import com.sun.booking.users.entity.User;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -61,11 +63,13 @@ public class AppConfig {
           tourDTO.setPrice(tour.getPrice());
           tourDTO.setRating(tour.getRating());
           tourDTO.setReviewsCount(tour.getReviewsCount());
+          tourDTO.setImageUrl(tour.getImageUrl());
         }
 
         if(source instanceof User && destination instanceof UserDTO) {
           User user = (User) source;
           UserDTO userDTO = (UserDTO) destination;
+          userDTO.setId(user.getId());
           userDTO.setUsername(user.getUsername());
           userDTO.setEmail(user.getEmail());
           userDTO.setSocialId(user.getSocialId());
@@ -84,6 +88,14 @@ public class AppConfig {
           reviewDTO.setTour(tourShortDto);
           reviewDTO.setRating(review.getRating());
           reviewDTO.setContent(review.getContent());
+        }
+
+        if(source instanceof Category && destination instanceof com.sun.booking.categories.dto.CategoryDTO) {
+          Category category = (Category) source;
+          CategoryDTO categoryDTO = (CategoryDTO) destination;
+          categoryDTO.setId(category.getId());
+          categoryDTO.setName(category.getName());
+          categoryDTO.setDescription(category.getDescription());
         }
 
         return destination;

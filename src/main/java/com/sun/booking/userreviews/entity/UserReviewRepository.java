@@ -14,4 +14,6 @@ public interface UserReviewRepository extends JpaRepository<UserReview, Long> {
     Page<UserReview> findByUserId(Long userId, Pageable pageable);
 
     List<UserReview> findByTourId(Long tourId);
+
+    Page<UserReview> findByTourId(Long tourId, Pageable pageable);
 }

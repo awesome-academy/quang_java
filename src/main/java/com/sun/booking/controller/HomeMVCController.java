@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.sun.booking.auth.dto.UserDTO;
 import com.sun.booking.common.Utils;
 import com.sun.booking.common.httpresponse.ListResponse;
+import com.sun.booking.jwt.JwtService;
 import com.sun.booking.tours.TourService;
 import com.sun.booking.tours.dto.TourDTO;
 
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class HomeMVCController {
 
   private final TourService tourService;
+  private final JwtService jwtService;
 
   @GetMapping("/home")
   public String homePage(Authentication authentication, Model model,
@@ -47,6 +49,7 @@ public class HomeMVCController {
                 map.put("description", dto.getDescription());
                 map.put("price", dto.getPrice());
                 map.put("rating", dto.getRating());
+                map.put("imageUrl", dto.getImageUrl());
                 map.put("reviewsCount", dto.getReviewsCount());
                 return map;
               })
@@ -56,9 +59,21 @@ public class HomeMVCController {
       model.addAttribute("curPageSize", tourList.getCurPageSize());
       model.addAttribute("totalElements", tourList.getTotalElements());
       model.addAttribute("totalPages", tourList.getTotalPages());
+
+      // generate new token for user page
+      UserDTO userDTO = new UserDTO();
+      userDTO.setId(currentUser.getId());
+      userDTO.setUsername(currentUser.getUsername());
+      userDTO.setEmail(currentUser.getEmail());
+      userDTO.setRoles(currentUser.getRoles());
+      String token = jwtService.generateToken(currentUser);
+      model.addAttribute("jwtToken", token);
+      model.addAttribute("userId", userDTO.getId());
       return "feed";
     } else {
+      // TODO return revenue data
       return "dashboard";
     }
   }
+
 }
