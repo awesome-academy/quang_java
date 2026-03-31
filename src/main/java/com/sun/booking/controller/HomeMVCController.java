@@ -16,7 +16,7 @@ import com.sun.booking.common.Utils;
 import com.sun.booking.common.httpresponse.ListResponse;
 import com.sun.booking.tours.TourService;
 import com.sun.booking.tours.dto.TourDTO;
-
+import com.sun.booking.users.UserService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -58,7 +58,9 @@ public class HomeMVCController {
       model.addAttribute("totalPages", tourList.getTotalPages());
       return "feed";
     } else {
+      // TODO return revenue data
       return "dashboard";
     }
   }
+
 }
